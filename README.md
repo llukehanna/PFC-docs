@@ -118,7 +118,7 @@ The G-family exists because the model's own inputs decay: card terms change mid-
 
 ### Write path — gated by provenance, not by surface
 
-Three surfaces can propose a change (MCP tool, terminal, web UI). None of them writes derived state. Every mutation is an **intent** committed with an actor and a provenance record, and only four validated write tools exist on the MCP side — card attributes, SUB facts, an observation, a verification. Anything else is a terminal command, deliberately. `recompute` itself is never a tool call: a long-lived model session cannot trigger a full re-derivation, and a stale server process cannot silently write a false proposal.
+Three surfaces can propose a change (MCP tool, terminal, web UI). None of them writes derived state. Every mutation is an **intent** committed with an actor and a provenance record, and only six validated write tools exist on the MCP side — card attributes, SUB facts, an observation, a verification, a declared assumption, and resolving an escalation. Anything else is a terminal command, deliberately. `recompute` itself is never a tool call: a long-lived model session cannot trigger a full re-derivation, and a stale server process cannot silently write a false proposal.
 
 Every MCP tool call is appended as a scrubbed JSONL line (args scrubbed, outcome recorded as row count or error class, never a result body), so "the tool said my 5/24 count was 4 on 3 Nov" is answerable later by joining back to the derivation run.
 
@@ -146,7 +146,7 @@ src/                      # ~71K LOC TypeScript, 231 files — runs directly und
   tax/                    # envelope, indexation, rounding
   project/                # frozen monthly projection grid + scoring against realized months
   intent/actors/          # mcp · terminal · web — the three provenance-bearing actors
-  mcp/read/  mcp/write/   # named tools with outputSchema + readOnlyHint; four validated write tools
+  mcp/read/  mcp/write/   # named tools with outputSchema + readOnlyHint; six validated write tools
   backup/                 # NDJSON export, VACUUM INTO snapshot, B2 offsite, offsite marker, restore drill
   secrets/                # keychain + age-encrypted file store, AES-GCM envelope
   notify/                 # digest + push
@@ -226,7 +226,8 @@ This is the part I spent the most time getting right, because the failure mode i
 - **Milestone v2.0 — The Wealth Model** (opened 13 Aug 2026): wealth ontology, versioned assumptions and the comparator, the twenty rules, tax engine and projection — shipped. Custody and the surfaces are live; the projection's monthly scoring cannot be evaluated until snapshotted months elapse.
 - Three Plaid Production Items and one SimpleFIN connection syncing daily on the host; frozen projection snapshot #1 is in the production ledger with the monthly timer live.
 - Web UI live behind Cloudflare Access; push alerts and both dead-man's switches (sync and web) firing.
-- 1,400+ commits since 6 Aug 2026 · 37 migrations · 285 test files · 3,144 unit tests and 352 Playwright checks across four viewports, all green.
+- As of 8 Oct 2026: 1,567 commits since 6 Aug 2026 · 43 migrations · 327 test files · 3,229 unit tests, plus Playwright checks across four viewports.
+- Since these docs were first written: "which card" answers by merchant; a guard test reads every screen for machine vocabulary; a read-only MCP server for claude.ai verifies the Cloudflare Access token at the origin and refuses to start ungated; a card's product change keeps its account id.
 - Deferred, not cancelled: monthly points reconciliation against hand-typed balances. Its payoff needs the merchant map to converge, which needs a year of my own spend flowing through it.
 
 ## What's in the private repo
